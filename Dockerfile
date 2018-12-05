@@ -12,8 +12,16 @@ RUN set -x \
   && apk del build-dependencies \
   && rm -rf /var/cache/apk/*
 
+COPY additional_package.json /opt/etherpad/package.json
+RUN set -x \
+  && cd /opt/etherpad \
+  && rm -rf node_modules \
+  && npm install --no-save --loglevel warn \
+  && cd /opt/etherpad/node_modules \
+  && ln -s ../src ep_etherpad-lite
+
 EXPOSE 9001
 ENV NODE_ENV=production
 ENV SCRIPTPATH=/opt/etherpad
 
-CMD ["node", "/opt/etherpad/node_modules/ep_etherpad-lite/node/server.js", "--root"]
+CMD ["node", "/opt/etherpad/node_modules/ep_etherpad-lite/node/server.js"]
